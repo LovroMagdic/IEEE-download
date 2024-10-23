@@ -1,2 +1,2 @@
 # IEEE-download-bot
-Python script for automating downloading and reading data from the IEEE site
+Python script for automating download from IEEE Xplore page. Reading downloaded PDF files and extracting email addresses.

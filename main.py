@@ -3,7 +3,6 @@
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
 
-
 from PyPDF2 import PdfReader
 
 reader = PdfReader("pdf_1.pdf")
@@ -18,10 +17,6 @@ for i in range(number_of_pages):
             print(each)
     print("======================")
 
-
-
-'''
-
 url = "https://ukarim.github.io/"
 page = urlopen(url)
 html = page.read().decode("utf-8")
@@ -31,5 +26,5 @@ tags = soup.find_all("a")
 
 for each in tags:
     print(each)
-'''
+
 
