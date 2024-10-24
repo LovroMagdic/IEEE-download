@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import time
+import sys
 
 #input_search = str(input("What are you searching for:"))
 input_search = "machine learning" # testing purpose
@@ -35,13 +36,18 @@ if not exit:
 else:
   elem = browser.find_element(By.CSS_SELECTOR, "[class*='results-actions-selectall-checkbox']")  # select all
   elem.click()
+  try:
+    elem = browser.find_element(By.CSS_SELECTOR, "[class*='download-pdf']")
+    elem.click()
+  except:
+    print(f"Couldnt locate Download PDF button. Check institutional sign in.")
+    sys.exit(0)
 
-  elem = browser.find_element(By.CSS_SELECTOR, "[class*='download-pdf']")
-  elem.click()
-
-  # downloadpdf-predl-proceed-button stats-SearchResults_BulkPDFDownload xpl-btn-primary
+  
   time.sleep(1)
-  elem = browser.find_element(By.CSS_SELECTOR, "[class*='stats-SearchResults_BulkPDFDownload']")
+
+  # find button to start bulk download
+  elem = browser.find_element(By.CSS_SELECTOR, "[class*='stats-SearchResults_BulkPDFDownload']") # downloadpdf-predl-proceed-button stats-SearchResults_BulkPDFDownload xpl-btn-primary
   elem.click()
 
   elem_close = 0 # flag for waiting download to finish
@@ -55,4 +61,4 @@ else:
   time.sleep(100000)
   browser.quit()
 
-# TODO dodaj funkc da se uvecara current_page_number i time skida pdfove, treba napravit petlju koja ce uvecavat broj i skidat ako moze ako ne onda nece
+# TODO dodaj funkc da se uvecava current_page_number i time skida pdfove, treba napravit petlju koja ce uvecavat broj i skidat ako moze ako ne onda nece
