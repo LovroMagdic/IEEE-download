@@ -2,25 +2,26 @@
 
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
+import os
 
 from PyPDF2 import PdfReader
+path = "./pdf_examples"
 
-reader = PdfReader("example.pdf")
-number_of_pages = len(reader.pages)
-for i in range(number_of_pages):
-    page = reader.pages[i]
-    text = page.extract_text()
-    text = text.replace("\n", " ")
-    print(text)
-    for each in text.split(" "):
-        if "@" in each:
-            print(each)
-    print("======================")
 
-url = "https://ukarim.github.io/"
-page = urlopen(url)
-html = page.read().decode("utf-8")
-soup = BeautifulSoup(html, "html.parser")
-tags = soup.find_all("a")
+files = os.listdir(path)
+for file in files:
+    if file != ".DS_Store":
+        print(f"In file{file} found:")
+
+        reader = PdfReader(path + "/" + file)
+        number_of_pages = len(reader.pages)
+        for i in range(number_of_pages):
+            page = reader.pages[i]
+            text = page.extract_text()
+            text = text.replace("\n", " ")
+            for each in text.split(" "):
+                if "@" in each:
+                    print(each)
+        print("=========================")
 
 
