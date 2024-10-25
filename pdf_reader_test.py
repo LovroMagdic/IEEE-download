@@ -5,7 +5,7 @@ from urllib.request import urlopen
 
 from PyPDF2 import PdfReader
 
-reader = PdfReader("pdf_1.pdf")
+reader = PdfReader("example.pdf")
 number_of_pages = len(reader.pages)
 for i in range(number_of_pages):
     page = reader.pages[i]
@@ -21,10 +21,6 @@ url = "https://ukarim.github.io/"
 page = urlopen(url)
 html = page.read().decode("utf-8")
 soup = BeautifulSoup(html, "html.parser")
-
 tags = soup.find_all("a")
-
-for each in tags:
-    print(each)
 
 

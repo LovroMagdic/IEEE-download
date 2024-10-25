@@ -5,9 +5,9 @@ from selenium.webdriver.common.keys import Keys
 import time
 import sys
 
-#this is just concept for future --headless work
+#this is just concept to test if driver can run in background(without GUI) and with user using computer (--headless work)
 
-reject_options = ["Odbij", "Reject"]
+
 
 chrome_options = Options()
 chrome_options.add_argument("--headless") # --headless mode, no GUI
@@ -17,6 +17,7 @@ driver = webdriver.Chrome(options=chrome_options) # init driver with options, us
 driver.get("https://www.google.com")
 driver.maximize_window() # just for testing purposes, will be removed in future
 
+reject_options = ["Odbij", "Reject"]
 buttons = driver.find_elements(By.TAG_NAME, 'button') # skip cookies
 for button in buttons:
     for option in reject_options:
