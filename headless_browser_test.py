@@ -2,27 +2,27 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-
 import time
 import sys
 
-# Set up Chrome options for headless mode
+#this is just concept for future --headless work
+
+reject_options = ["Odbij", "Reject"]
+
 chrome_options = Options()
-chrome_options.add_argument("--headless")
-chrome_options.add_argument('--log-level=3')
+chrome_options.add_argument("--headless") # --headless mode, no GUI
+chrome_options.add_argument('--log-level=3') # should remove log messeges, doesnt work for now
 
-# Initialize the browser in headless mode
-driver = webdriver.Chrome(options=chrome_options) # options=chrome_options
+driver = webdriver.Chrome(options=chrome_options) # init driver with options, used for headless
 driver.get("https://www.google.com")
-driver.maximize_window()
+driver.maximize_window() # just for testing purposes, will be removed in future
 
-buttons = driver.find_elements(By.TAG_NAME, 'button')
-
-# Iterate through the buttons to find the one with the text "test"
+buttons = driver.find_elements(By.TAG_NAME, 'button') # skip cookies
 for button in buttons:
-    if "Odbij" in button.text:
-        button.click()  # Click the button
-        break  # Stop once we've clicked the button
+    for option in reject_options:
+        if option in button.text:
+            button.click()
+            break
 
 elem_search = driver.find_element(By.TAG_NAME, "textarea")
 elem_search.click()
