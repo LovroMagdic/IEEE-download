@@ -11,7 +11,8 @@ page_number = "&pageNumber=" # need to concate str with number of page, used to 
 current_page_number = str(1)
 
 browser = webdriver.Chrome()
-browser.get('https://ieeexplore.ieee.org/search/searchresult.jsp?newsearch=true&queryText=' + input_search + rows_per_page + page_number + current_page_number)
+#browser.get('https://ieeexplore.ieee.org/search/searchresult.jsp?newsearch=true&queryText=' + input_search + rows_per_page + page_number + current_page_number)
+browser.get("https://ieeexplore.ieee.org/xpl/conhome/10569139/proceeding") # testing for specific link
 browser.maximize_window()
 time.sleep(5)
 exit = bool(0) # 0 results FALSE, 1 results TRUE

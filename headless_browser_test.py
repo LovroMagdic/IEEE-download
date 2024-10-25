@@ -13,7 +13,7 @@ chrome_options = Options()
 chrome_options.add_argument("--headless") # --headless mode, no GUI
 chrome_options.add_argument('--log-level=3') # should remove log messeges, doesnt work for now
 
-driver = webdriver.Chrome(options=chrome_options) # init driver with options, used for headless
+driver = webdriver.Chrome() # init driver with options, used for headless
 driver.get("https://www.google.com")
 driver.maximize_window() # just for testing purposes, will be removed in future
 
