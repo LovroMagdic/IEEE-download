@@ -16,7 +16,7 @@ def create_threads(target_function, args_list):
     for thread in threads:
         thread.join()
 
-def example_function(arg):
+def thread_job(arg):
     print(f"Thread started getting downloads from: {arg}")
 
     chrome_options = Options()
@@ -86,12 +86,11 @@ page_number = "&pageNumber=" # need to concate str with number of page, used to 
 current_page_number = 1
 
 max = 10
-
 arg_list = []
 for i in range(1,10,1):
     arg_list.append("https://ieeexplore.ieee.org/search/searchresult.jsp?newsearch=true&queryText=" + input_search + rows_per_page + page_number + str(current_page_number))
     current_page_number +=1
 
-create_threads(example_function, arg_list)
+create_threads(thread_job, arg_list)
 
 #TODO prepoznat koliko stranica rezultata postoji
