@@ -7,4 +7,4 @@ TODO:
     - isprobat download na stranici gdje je prikazano 100 rezultata i skripta pronalazi PDF ikonu i manualno skida jedan po jedan<br>
     - regex za pronalazak mailova u PDFu<br>
 <br>
-28.10, napisana skripta za zadnju mogucu stranicu, radi sporo i ne radi u headless modu, treba postavit handle za getting result dok je prisutan to je vjv problem ne nalaska next-btn elementa <br>
+28.10, napisana skripta za malazanje zadnje moguce stranice, radi sporo i ne radi u headless modu, treba postavit handle za getting result dok je prisutan to je vjv problem ne nalaska next-btn elementa <br>
