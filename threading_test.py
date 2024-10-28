@@ -45,11 +45,17 @@ def example_function(arg):
         browser.quit()
         
     else:
-        elem = browser.find_element(By.CSS_SELECTOR, "[class*='results-actions-selectall-checkbox']")  # select all
-        elem.click()
+        elem_select_all = 0 # flag for checking if select all button showedup
+        while elem_select_all == 0:
+            try:
+                elem_select_all = browser.find_element(By.CSS_SELECTOR, "[class*='results-actions-selectall-checkbox']")  # select all
+                elem_select_all.click()
+            except:
+                print("Couldnt locate select all button, trying again.")
+        
         try:
-            elem = browser.find_element(By.CSS_SELECTOR, "[class*='download-pdf']")
-            elem.click()
+                elem = browser.find_element(By.CSS_SELECTOR, "[class*='download-pdf']")
+                elem.click()
         except:
             print(f"Couldnt locate Download PDF button. Check institutional sign in.")
             sys.exit(0)
