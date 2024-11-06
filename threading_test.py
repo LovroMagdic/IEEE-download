@@ -2,7 +2,7 @@ import threading
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-#from last_element import script # TODO ubacit koristenje script iz last_element.py
+from last_index_result import get_last_result_index
 import time
 import sys
 
@@ -23,9 +23,8 @@ def thread_job(arg):
     print(f"Thread started getting downloads from: {arg}")
 
     chrome_options = Options()
-    chrome_options.add_argument("--headless") # --headless mode, no GUI
-    chrome_options.add_argument('--log-level=3')
     browser = webdriver.Chrome()
+    browser.minimize_window()
     browser.get(arg)
     time.sleep(5)
     exit = bool(0) # 0 results FALSE, 1 results TRUE
@@ -82,18 +81,24 @@ def thread_job(arg):
         browser.quit()
     print(f"Thread finished getting downloads from: {arg}")
 
+# "https://ieeexplore.ieee.org/xpl/conhome/10569139/proceeding"
+link = "https://ieeexplore.ieee.org/xpl/conhome/10569139/proceeding"
+max = get_last_result_index(link)
+
+print(max)
+
 input_search = "machine learning" # testing purpose
 input_search = "%20".join(input_search.split(" "))
 rows_per_page = "&rowsPerPage=10" # makes sure that all PDFs on page are downloaded, since there is a limit of 10 per download req
 page_number = "&pageNumber=" # need to concate str with number of page, used to make sure all pdf for search results are downloaded
 current_page_number = 1
 
-max = 10
+max = 5
 arg_list = []
-for i in range(1,20,1):
+for i in range(1,max,1):
     arg_list.append("https://ieeexplore.ieee.org/search/searchresult.jsp?newsearch=true&queryText=" + input_search + rows_per_page + page_number + str(current_page_number))
     current_page_number +=1
 
 create_threads(thread_job, arg_list)
 
-#TODO prepoznat koliko stranica rezultata postoji
+#TODO testirat

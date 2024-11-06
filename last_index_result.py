@@ -3,8 +3,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 import time
 
-
-def script(link):
+def get_last_result_index(link):
     # this script finds last page on results page
 
     chrome_options = Options()
@@ -51,10 +50,8 @@ def script(link):
             #time.sleep(3) # it takes a long time to get results, could be fixed with if getting results present wait
             #last_page += 1
         except:
-            print(f"There is no next page, {last_page} is last page.")
+            #print(f"There is no next page, {last_page} is last page.")
             elem_next_btn = 0
 
     # fas fa-spinner fa-5x fa-spin -- detect spinner
     return last_page
-
-last_page = script("https://ieeexplore.ieee.org/xpl/conhome/10569139/proceeding")
