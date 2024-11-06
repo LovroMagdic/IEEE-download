@@ -2,8 +2,11 @@ import threading
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+from last_element import script # TODO ubacit koristenje script iz last_element.py
 import time
 import sys
+
+# MAIN - creating threads, downloading from every page in results, doesnt work in headless, TODO add script for finding last page of results
 
 def create_threads(target_function, args_list):
     threads = []

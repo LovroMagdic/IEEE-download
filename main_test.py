@@ -3,6 +3,8 @@ from selenium.webdriver.common.by import By
 import time
 import sys
 
+# MOCK script for downloading pdfs - not used anymore
+
 #input_search = str(input("What are you searching for:"))
 input_search = "machine learning" # testing purpose
 input_search = "%20".join(input_search.split(" "))
@@ -61,5 +63,3 @@ else:
   
   time.sleep(100000)
   browser.quit()
-
-# TODO dodaj funkc da se uvecava current_page_number i time skida pdfove, treba napravit petlju koja ce uvecavat broj i skidat ako moze ako ne onda nece

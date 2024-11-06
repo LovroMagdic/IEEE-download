@@ -6,6 +6,8 @@ import time
 import sys
 import threading
 
+# script for working in headless, used for testing purposes
+
 def my_function(thread_id):
     print(f"Thread {thread_id} started.")
     chrome_options = Options()

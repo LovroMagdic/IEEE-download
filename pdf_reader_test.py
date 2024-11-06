@@ -2,6 +2,8 @@ import os
 import re
 from PyPDF2 import PdfReader
 
+# script used for reading downloaded pdfs and extracting emails
+
 path = "./pdf_examples"
 files = os.listdir(path)
 email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b'
