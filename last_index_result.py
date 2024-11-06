@@ -34,7 +34,7 @@ def get_last_result_index(link):
         try:
             while spinner != 0:
                 try:
-                    elem_spinner = browser.find_element(By.CSS_SELECTOR, "[class*='fa-spin']")
+                    spinner = browser.find_element(By.CSS_SELECTOR, "[class*='fa-spin']")
                     #print("found spinner", elem_spinner)
                 except:
                     spinner = 0
@@ -55,3 +55,5 @@ def get_last_result_index(link):
 
     # fas fa-spinner fa-5x fa-spin -- detect spinner
     return last_page
+
+#print(get_last_result_index("https://ieeexplore.ieee.org/xpl/conhome/10569139/proceeding"))
