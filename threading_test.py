@@ -2,7 +2,7 @@ import threading
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-from last_element import script # TODO ubacit koristenje script iz last_element.py
+#from last_element import script # TODO ubacit koristenje script iz last_element.py
 import time
 import sys
 
@@ -90,7 +90,7 @@ current_page_number = 1
 
 max = 10
 arg_list = []
-for i in range(1,10,1):
+for i in range(1,20,1):
     arg_list.append("https://ieeexplore.ieee.org/search/searchresult.jsp?newsearch=true&queryText=" + input_search + rows_per_page + page_number + str(current_page_number))
     current_page_number +=1
 
