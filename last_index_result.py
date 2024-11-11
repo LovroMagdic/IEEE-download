@@ -25,7 +25,9 @@ def get_last_result_index(link):
     second_page_url = browser.current_url
     sufix = second_page_url.split("?")[1]
     sufix = sufix.replace("pageNumber=2", "rowsPerPage=10")
+    link_first_page = link + "?" + sufix # this is returned as value to easily iterate pages in the future
     browser.get(link +"?"+ sufix)
+    
 
     time.sleep(5)
     elem_next_btn = 1
@@ -54,6 +56,5 @@ def get_last_result_index(link):
             elem_next_btn = 0
 
     # fas fa-spinner fa-5x fa-spin -- detect spinner
-    return last_page
-
-#print(get_last_result_index("https://ieeexplore.ieee.org/xpl/conhome/10569139/proceeding"))
+    print(f"For page {link} there are {last_page} pages of results.")
+    return last_page, link_first_page
