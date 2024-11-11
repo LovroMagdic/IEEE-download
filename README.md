@@ -11,4 +11,4 @@ TODO:
     - isprobat download na stranici gdje je prikazano 100 rezultata i skripta pronalazi PDF ikonu i manualno skida jedan po jedan<br>
 
 <br>
-6.11 dovrsen last_element.py, dohavaca zadnju stranicu rezultata pretrazivanje, radi brze, headless nacin testiran i vjerojatno se nece koristit, alternativa je "browser.minimize_window()". <br>
+11.11 prva u potpunosti funkcionalna verzija "IEEE_download_script.py", odbacen nacin koristenja vise dretvi, trenutno se koristi iteriranje, za ~ 370 rezultata treba oko ~15min.<br>
