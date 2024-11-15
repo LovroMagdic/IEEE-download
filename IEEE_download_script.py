@@ -8,9 +8,11 @@ import sys
 
 # MAIN - creating threads, downloading from every page in results, doesnt work in headless, TODO add script for finding last page of results
 
-# this is now 11.11 fully functional with "download" function, not using threads
+# this is now 16.11 fully functional with "download" function, not using threads
 
-def download_test_new(testing): # this done without more threads
+def download_from_list(testing): # this done without more threads
+    # testing -- list of links wo open with browser and get pages, iterates through list
+
     chrome_options = webdriver.ChromeOptions()
     prefs = {'download.default_directory' : '/Users/lovro/Desktop/IEEE-download/zip'}
     chrome_options.add_experimental_option('prefs', prefs)
@@ -77,8 +79,10 @@ def download_test_new(testing): # this done without more threads
             #browser.quit()
         print(f"Finished getting downloads from: {page_num[1]}")
 
-
 def download(arg): # this done without more threads
+    # arg is page link to open and download from, slower than download_from_list
+    # possibly more reliant, needs more testing
+
     page_num = arg.split("&pageNumber=")
     print(f"Started getting downloads from: {page_num[1]}")
 
@@ -228,17 +232,17 @@ page_number = "&pageNumber=" # need to concate str with number of page, used to 
 current_page_number = 1
 
 arg_list = []
-testing = []
+list_of_urls_to_open = []
 start_time = time.time()
 for i in range(1,max+1,1):
-    tmp = fixed_link + page_number + str(current_page_number)
-    testing.append(tmp)
-    #download(fixed_link + page_number + str(current_page_number))
+    full_link = fixed_link + page_number + str(current_page_number)
+    list_of_urls_to_open.append(full_link)
+    #download(fixed_link + page_number + str(current_page_number)) # --- uncomment to run with download function
     #arg_list.append(fixed_link + page_number + str(current_page_number))
     current_page_number +=1
-download_test_new(testing)
+download_from_list(list_of_urls_to_open)
 print("--- %s seconds ---" % (time.time() - start_time))
 
-#create_threads(thread_job, arg_list)
+#create_threads(thread_job, arg_list) # --- uncomment to test threads function
 
 #TODO testirat

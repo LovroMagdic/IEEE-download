@@ -12,3 +12,5 @@ TODO:
 
 <br>
 11.11 prva u potpunosti funkcionalna verzija "IEEE_download_script.py", odbacen nacin koristenja vise dretvi, trenutno se koristi iteriranje, za ~ 370 rezultata treba oko ~15min.<br>
+<br>
+16.11 funkcionalna verzija sa nesto brzom metodom rada od prijasnje(dodana nova funkcija za download) za ~ 370 rezultata treba oko ~13min. Koristenje dretvi idalje najbrza metoda ali ne radi u potpunosti ispravno(neke dretve ne odrade download do kraja.)<br>

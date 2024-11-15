@@ -1,6 +1,4 @@
 __pycache__/
-zip/
-unzip/
-.DS_Store
 .zip
+.DS_Store
 .CNN/dataset/
