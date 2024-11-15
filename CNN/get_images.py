@@ -17,7 +17,7 @@ for each in f:
     url = "https://ieeexplore.ieee.org/search/searchresult.jsp?newsearch=true&queryText=" + each
     driver.get(url)
     
-    time.sleep(5)
+    time.sleep(10)
 
     screenshot_path = "CNN/" + each + ".png"
     driver.save_screenshot(screenshot_path)
