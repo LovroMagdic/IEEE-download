@@ -14,7 +14,7 @@ for file in files:
             zip_ref.extractall("./unzip")
 
 # script used for reading downloaded pdfs and extracting emails
-
+time.sleep(1000)
 path = "./unzip"
 files = os.listdir(path)
 email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b'
