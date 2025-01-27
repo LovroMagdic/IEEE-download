@@ -3,7 +3,8 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 import time
 
-def get_last_result_index(link):
+def get_last_result_index(link,state=0):
+    
     # this script finds last page on results page
 
     chrome_options = Options()
@@ -19,6 +20,7 @@ def get_last_result_index(link):
         elem_cookie.click()
     except:
         pass
+    
     #this is used to get sufix from original link and change it to get rowsperpage
     elem_next_btn = browser.find_element(By.CSS_SELECTOR, "[class*='next-btn']") #next-btn
     elem_next_btn.click()
@@ -26,6 +28,8 @@ def get_last_result_index(link):
     sufix = second_page_url.split("?")[1]
     sufix = sufix.replace("pageNumber=2", "rowsPerPage=10")
     link_first_page = link + "?" + sufix # this is returned as value to easily iterate pages in the future
+    if state == 1:
+        return 1,link_first_page
     browser.get(link +"?"+ sufix)
     
 

@@ -4,7 +4,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from last_index_result import get_last_result_index
 import time
-import sys
+import sys, re
 
 # MAIN - creating threads, downloading from every page in results, doesnt work in headless, TODO add script for finding last page of results
 
@@ -22,7 +22,7 @@ def download_from_list(testing): # this done without more threads
         page_num = each.split("&pageNumber=")
         print(f"Started getting downloads from: {page_num[1]}")
 
-        browser.minimize_window()
+        #browser.minimize_window()
         browser.get(each)
         time.sleep(5)
         exit = bool(0) # 0 results FALSE, 1 results TRUE
@@ -71,7 +71,16 @@ def download_from_list(testing): # this done without more threads
             while elem_close == 0: # while flag is 0 downloading is still ongoing, 1 download is finished (by download we mean on page creating zip file)
                 try:
                     elem_close = browser.find_element(By.CSS_SELECTOR, "[class*='modal-close']")
-                    #browser.refresh() # this should be better than just refreshing the page :(
+                    elem_close_message = browser.find_element(By.CSS_SELECTOR, "[class*='downloadpdf-postdl-msg']") # class="downloadpdf-postdl-msg"
+                    elem_close_message = elem_close_message.get_attribute("innerHTML").splitlines()[0]
+                    pattern = r'<div[^>]*class="downloadpdf-postdl-msg"[^>]*>(.*?)</div>'
+
+                    result = re.search(pattern, str(elem_close_message))
+                    #if result:
+                        #print(result.group(1).strip())
+                    #print(f"This is message recorded: {elem_close_message}")# this works, needs to check what is returned, for testing this is OK output <div _ngcontent-ng-c4125381912="" class="downloadpdf-postdl-msg"> The items you have selected have been successfully downloaded. </div><!----><!----><!----><!---->
+                    print(f"Message: {result.group(1).strip()}")# this works, needs to check what is returned, for testing this is OK output <div _ngcontent-ng-c4125381912="" class="downloadpdf-postdl-msg"> The items you have selected have been successfully downloaded. </div><!----><!----><!----><!---->
+
                 except:
                     pass
             
@@ -123,7 +132,7 @@ def download(arg): # this done without more threads
                 print("Couldnt locate select all button, trying again.")
         
         try:
-                elem = browser.find_element(By.CSS_SELECTOR, "[class*='download-pdf']")
+                elem = browser.find_element(By.CSS_SELECTOR, "[class*='download-pdf']") # donwload all PDF
                 elem.click()
         except:
             print(f"Couldnt locate Download PDF button. Check institutional sign in.")
@@ -140,7 +149,10 @@ def download(arg): # this done without more threads
         while elem_close == 0: # while flag is 0 downloading is still ongoing, 1 download is finished (by download we mean on page creating zip file)
             try:
                 elem_close = browser.find_element(By.CSS_SELECTOR, "[class*='modal-close']")
-                browser.refresh() # this should be better than just refreshing the page :(
+                elem_close_message = browser.find_element(By.CSS_SELECTOR, "[class*='downloadpdf-postdl-msg']") # class="downloadpdf-postdl-msg"
+                elem_close_message = elem_close_message.get_attribute("innerHTML").splitlines()[0]
+                print(f"This is message recorded: {elem_close_message}")# this works, needs to check what is returned, for testing this is OK output <div _ngcontent-ng-c4125381912="" class="downloadpdf-postdl-msg"> The items you have selected have been successfully downloaded. </div><!----><!----><!----><!---->
+                browser.refresh() # this should be better than just refreshing the page :(, can be removed in this fucntion since it just closes browser at the end
             except:
                 pass
         
@@ -221,28 +233,48 @@ def thread_job(arg):
         browser.quit()
     print(f"Thread finished getting downloads from: {arg}")
 
-link = "https://ieeexplore.ieee.org/xpl/conhome/10569139/proceeding"
+
+# main
+
+link = "https://ieeexplore.ieee.org/xpl/conhome/10500516/proceeding"
+print(f"Started script for link > {link}")
 max, fixed_link = get_last_result_index(link) # fixed link is link which works with just concating page number string to original link
+print(f"Last page detected {max}, and fixed link > {fixed_link}")
 # https://ieeexplore.ieee.org/xpl/conhome/10569139/proceeding?isnumber=10569147&sortType=vol-only-seq&rowsPerPage=10
 
+# this isnt used since it was just for testing
 input_search = "machine learning" # testing purpose
 input_search = "%20".join(input_search.split(" "))
 rows_per_page = "&rowsPerPage=10" # makes sure that all PDFs on page are downloaded, since there is a limit of 10 per download req
 page_number = "&pageNumber=" # need to concate str with number of page, used to make sure all pdf for search results are downloaded
-current_page_number = 1
 
+current_page_number = 1
 arg_list = []
 list_of_urls_to_open = []
 start_time = time.time()
+
 for i in range(1,max+1,1):
-    full_link = fixed_link + page_number + str(current_page_number)
-    list_of_urls_to_open.append(full_link)
-    #download(fixed_link + page_number + str(current_page_number)) # --- uncomment to run with download function
-    #arg_list.append(fixed_link + page_number + str(current_page_number))
+    #full_link = fixed_link + page_number + str(current_page_number)
+    #list_of_urls_to_open.append(full_link)
+    download(fixed_link + page_number + str(current_page_number)) # --- uncomment to run with download function
+    arg_list.append(fixed_link + page_number + str(current_page_number))
     current_page_number +=1
-download_from_list(list_of_urls_to_open)
+#download_from_list(list_of_urls_to_open)
 print("--- %s seconds ---" % (time.time() - start_time))
 
 #create_threads(thread_job, arg_list) # --- uncomment to test threads function
 
 #TODO testirat
+
+
+
+
+
+# BUG TESTING
+
+# ogromna konferencija https://ieeexplore.ieee.org/xpl/conhome/10723818/proceeding
+# bug di ako ima manje od 10 rezultata ne postoji nova stranica ikada pa detektira kao da nema rezultata
+# malena konferencija https://ieeexplore.ieee.org/xpl/conhome/10483273/proceeding
+
+
+#possible message exceptions : Items have not been downloaded because they are either outside of your subscription or not eligible for multiple PDF download.

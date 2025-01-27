@@ -4,6 +4,7 @@ from PyPDF2 import PdfReader
 import zipfile
 import time
 
+output = open("output.txt", "a")
 path_zip = "./zip"
 path_unzip = "./unzip"
 files = os.listdir(path_zip)
@@ -14,13 +15,14 @@ for file in files:
             zip_ref.extractall("./unzip")
 
 # script used for reading downloaded pdfs and extracting emails
-time.sleep(1000)
+
 path = "./unzip"
 files = os.listdir(path)
 email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b'
 for file in files:
     if file != ".DS_Store":
-        print(f"In file {file} found:")
+        #print(f"In file {file} found:")
+        output.write(f"In file {file} found:\n")
 
         reader = PdfReader(path + "/" + file)
         number_of_pages = len(reader.pages)
@@ -29,5 +31,9 @@ for file in files:
             text = page.extract_text()
             emails = re.findall(email_pattern, text)
             for each in emails:
-                print(each)
-        print("=========================")
+                #print(each)
+                output.write(each + "\n")
+        #print("=========================")
+        output.write("============================\n")
+
+output.write("\n\n\n")
