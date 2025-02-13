@@ -3,6 +3,9 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 import time, re, sys
 
+#script for detecting number of result pages for link
+
+# this was used for testing
 links = ["https://ieeexplore.ieee.org/search/searchresult.jsp?newsearch=true&queryText=mali%20bembo",
          "https://ieeexplore.ieee.org/search/searchresult.jsp?newsearch=true&queryText=machine%20learning", 
          "https://ieeexplore.ieee.org/xpl/conhome/10723818/proceeding",

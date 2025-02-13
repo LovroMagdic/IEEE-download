@@ -1,15 +1,11 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-from last_index_result import get_last_result_index
 import time, sys, re
-
-# this is now 16.11 fully functional with "download" function, not using threads
 
 def ceiling_based_on_last_digit(number):
     if number % 10 == 0:
         return number
-
     return (number // 10 + 1) * 10
 
 def get_last_index(link):
@@ -71,8 +67,9 @@ def get_last_index(link):
 def download_from_list(testing): # this done without more threads
     # testing -- list of links wo open with browser and get pages, iterates through list
 
+    system_exit = 0
     chrome_options = webdriver.ChromeOptions()
-    prefs = {'download.default_directory' : '/Users/lovro/Desktop/IEEE-download/zip'}
+    prefs = {'download.default_directory' : '/Users/lovro/Desktop/IEEE-download/zip'} # this needs to be defined by user
     chrome_options.add_experimental_option('prefs', prefs)
 
     browser = webdriver.Chrome(options=chrome_options)
@@ -99,26 +96,37 @@ def download_from_list(testing): # this done without more threads
             exit = 1
 
         if not exit:
-            print(f"No search results for: {input_search}")
+            print(f"No search results for: {link}")
             browser.quit()
             
         else:
             elem_select_all = 0 # flag for checking if select all button showedup
+            num_try = 0
             while elem_select_all == 0:
                 try:
                     elem_select_all = browser.find_element(By.CSS_SELECTOR, "[class*='results-actions-selectall-checkbox']")  # select all
                     elem_select_all.click()
                 except:
                     print("Couldnt locate select all button, trying again.")
+                    time.sleep(2)
+                    num_try += 1
+
+                    if num_try > 10:
+                        system_exit = 1
+            
+            if system_exit == 1:
+                sys.exit(0)
             
             try:
-                    elem = browser.find_element(By.CSS_SELECTOR, "[class*='download-pdf']")
-                    elem.click()
+                elem = browser.find_element(By.CSS_SELECTOR, "[class*='download-pdf']")
+                elem.click()
             except:
                 print(f"Couldnt locate Download PDF button. Check institutional sign in.")
+                system_exit = 1
+            
+            if system_exit == 1:
                 sys.exit(0)
 
-        
             time.sleep(1)
 
             # find button to start bulk download
@@ -126,6 +134,7 @@ def download_from_list(testing): # this done without more threads
             elem.click()
 
             elem_close = 0 # flag for waiting download to finish
+            system_exit = 0
             while elem_close == 0: # while flag is 0 downloading is still ongoing, 1 download is finished (by download we mean on page creating zip file)
                 try:
                     elem_close = browser.find_element(By.CSS_SELECTOR, "[class*='modal-close']")
@@ -143,94 +152,21 @@ def download_from_list(testing): # this done without more threads
                         print("Failed dowloading, exiting process.")
                         report_file = open("report_file.txt", "a")
                         report_file.write(f"Download failed for link > {each}, last page downloaded > {page_num}") # TODO testing
-                        sys.exit()
+                        system_exit = 1
                 except:
                     pass
+
+                if system_exit:
+                    sys.exit(0)
             
             time.sleep(5)
-            #browser.quit()
         print(f"Finished getting downloads from: {page_num[1]}")
 
-def download(arg): # this done without more threads
-    # arg is page link to open and download from, slower than download_from_list
-    # possibly more reliant, needs more testing
-
-    page_num = arg.split("&pageNumber=")
-    print(f"Started getting downloads from: {page_num[1]}")
-
-    chrome_options = webdriver.ChromeOptions()
-    prefs = {'download.default_directory' : '/Users/lovro/Desktop/IEEE-download/zip'}
-    chrome_options.add_experimental_option('prefs', prefs)
-
-    browser = webdriver.Chrome(options=chrome_options)
-    browser.minimize_window()
-    browser.get(arg)
-    time.sleep(5)
-    exit = bool(0) # 0 results FALSE, 1 results TRUE
-
-    #handle cookies
-    try:
-        elem_cookie = browser.find_element(By.CSS_SELECTOR, "[class*='osano-cm-button--type_denyAll ']") #osano-cm-button--type_denyAll
-        elem_cookie.click()
-    except:
-        pass
-
-    # handler for no results
-    try:
-        elem_cookie = browser.find_element(By.CSS_SELECTOR, "[class*='List-results-none']") #osano-cm-button--type_denyAll
-    except:
-        exit = 1
-
-    if not exit:
-        print(f"No search results for: {input_search}")
-        browser.quit()
-        
-    else:
-        elem_select_all = 0 # flag for checking if select all button showedup
-        while elem_select_all == 0:
-            try:
-                elem_select_all = browser.find_element(By.CSS_SELECTOR, "[class*='results-actions-selectall-checkbox']")  # select all
-                elem_select_all.click()
-            except:
-                print("Couldnt locate select all button, trying again.")
-        
-        try:
-                elem = browser.find_element(By.CSS_SELECTOR, "[class*='download-pdf']") # donwload all PDF
-                elem.click()
-        except:
-            print(f"Couldnt locate Download PDF button. Check institutional sign in.")
-            sys.exit(0)
-
-    
-        time.sleep(1)
-
-        # find button to start bulk download
-        elem = browser.find_element(By.CSS_SELECTOR, "[class*='stats-SearchResults_BulkPDFDownload']") # downloadpdf-predl-proceed-button stats-SearchResults_BulkPDFDownload xpl-btn-primary
-        elem.click()
-
-        elem_close = 0 # flag for waiting download to finish
-        while elem_close == 0: # while flag is 0 downloading is still ongoing, 1 download is finished (by download we mean on page creating zip file)
-            try:
-                elem_close = browser.find_element(By.CSS_SELECTOR, "[class*='modal-close']")
-                elem_close_message = browser.find_element(By.CSS_SELECTOR, "[class*='downloadpdf-postdl-msg']") # class="downloadpdf-postdl-msg"
-                elem_close_message = elem_close_message.get_attribute("innerHTML").splitlines()[0]
-                print(f"This is message recorded: {elem_close_message}")# this works, needs to check what is returned, for testing this is OK output <div _ngcontent-ng-c4125381912="" class="downloadpdf-postdl-msg"> The items you have selected have been successfully downloaded. </div><!----><!----><!----><!---->
-                browser.refresh() # this should be better than just refreshing the page :(, can be removed in this fucntion since it just closes browser at the end
-            except:
-                pass
-        
-        time.sleep(5)
-        browser.quit()
-    print(f"Finished getting downloads from: {page_num[1]}")
-
-# main
-
-link = "https://ieeexplore.ieee.org/xpl/conhome/10500516/proceeding"
+# MAIN
+link = "https://ieeexplore.ieee.org/xpl/conhome/10723818/proceeding"
 print(f"Started script for link > {link}")
-max, fixed_link = get_last_index(link) # NEWER AND FASTER
-#max, fixed_link = get_last_result_index(link) # OLDER
+max, fixed_link = get_last_index(link)
 print(f"Last page detected {max}, and fixed link > {fixed_link}")
-# https://ieeexplore.ieee.org/xpl/conhome/10569139/proceeding?isnumber=10569147&sortType=vol-only-seq&rowsPerPage=10
 
 rows_per_page = "&rowsPerPage=10" # makes sure that all PDFs on page are downloaded, since there is a limit of 10 per download req
 page_number = "&pageNumber=" # need to concate str with number of page, used to make sure all pdf for search results are downloaded
@@ -243,8 +179,6 @@ start_time = time.time()
 for i in range(1,max+1,1):
     full_link = fixed_link + page_number + str(current_page_number)
     list_of_urls_to_open.append(full_link)
-    #download(fixed_link + page_number + str(current_page_number)) # --- uncomment to run with download function
-    #arg_list.append(fixed_link + page_number + str(current_page_number))
     current_page_number +=1
 download_from_list(list_of_urls_to_open)
 print("--- %s seconds ---" % (time.time() - start_time))
