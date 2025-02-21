@@ -1,7 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-import time, sys, re
+import time, sys, re, os
 
 def ceiling_based_on_last_digit(number):
     if number % 10 == 0:
@@ -150,8 +150,10 @@ def download_from_list(testing): # this done without more threads
                     print(f"Message: {result_message}")# this works, needs to check what is returned, for testing this is OK output <div _ngcontent-ng-c4125381912="" class="downloadpdf-postdl-msg"> The items you have selected have been successfully downloaded. </div><!----><!----><!----><!---->
                     if result_message != "The items you have selected have been successfully downloaded.":
                         print("Failed dowloading, exiting process.")
-                        report_file = open("report_file.txt", "a")
-                        report_file.write(f"Download failed for link > {each}, last page downloaded > {page_num}") # TODO testing
+                        report_file = open("report_file.txt", "w")
+                        report_link = each.split("?isnumber")[0]
+                        report_file.write(f"{page_num},{report_link}")
+                        print(f"Download failed for link > {report_link}, last page downloaded > {page_num}") # TODO testing
                         system_exit = 1
                 except:
                     pass
@@ -163,23 +165,50 @@ def download_from_list(testing): # this done without more threads
         print(f"Finished getting downloads from: {page_num[1]}")
 
 # MAIN
-link = "https://ieeexplore.ieee.org/xpl/conhome/10723818/proceeding"
-print(f"Started script for link > {link}")
-max, fixed_link = get_last_index(link)
-print(f"Last page detected {max}, and fixed link > {fixed_link}")
-
 rows_per_page = "&rowsPerPage=10" # makes sure that all PDFs on page are downloaded, since there is a limit of 10 per download req
 page_number = "&pageNumber=" # need to concate str with number of page, used to make sure all pdf for search results are downloaded
-
-current_page_number = 1
+initial_page_number = 1
 arg_list = []
 list_of_urls_to_open = []
 start_time = time.time()
 
-for i in range(1,max+1,1):
-    full_link = fixed_link + page_number + str(current_page_number)
+link = "https://ieeexplore.ieee.org/xpl/conhome/10723818/proceeding"
+print(f"Started script for link > {link}")
+
+#check whether report file exists
+file_exists_flag = False
+file = "report_file.txt"
+
+if os.path.isfile(file):
+    file_exists_flag = True
+    f = open(file)
+    error_msg = ""
+    for line in f:
+        error_msg = line.split(",")
+    error_code = int(error_msg[0])
+    error_link = error_msg[1]
+
+    print(f"Detected report file for link > {error_link}.")
+
+    if link == error_link:
+        initial_page_number = error_code
+        print(f"Report file and link provided are the same. Do you wish to continue downloading from page > {error_code}?")
+        user_response = str(input("(Y/N)?"))
+
+        if user_response.lower() == "y":
+            initial_page_number = error_code
+        elif user_response.lower() == "n":
+            initial_page_number = 1
+        else:
+            sys.exit(0)
+
+max, fixed_link = get_last_index(link)
+print(f"Last page detected {max}, and fixed link > {fixed_link}")
+
+for i in range(initial_page_number,max+1,1):
+    full_link = fixed_link + page_number + str(initial_page_number)
     list_of_urls_to_open.append(full_link)
-    current_page_number +=1
+    initial_page_number +=1
 download_from_list(list_of_urls_to_open)
 print("--- %s seconds ---" % (time.time() - start_time))
 
