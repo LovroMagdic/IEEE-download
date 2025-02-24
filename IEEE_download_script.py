@@ -21,14 +21,18 @@ def get_last_index(link):
         pass
     time.sleep(2)
 
-    #this is used to get sufix from original link and change it to get rowsperpage
-    #THIS WILL CAUSE PROBLEMS FOR PAGES THAT HAVE RESULTS BUT NOT MULTIPLE PAGES, EXAMPLE: RESULTS OF LESS THAN 10 PDFS
-    elem_next_btn = browser.find_element(By.CSS_SELECTOR, "[class*='next-btn']") #next-btn
-    elem_next_btn.click()
-    second_page_url = browser.current_url
-    sufix = second_page_url.split("?")[1]
-    sufix = sufix.replace("pageNumber=2", "rowsPerPage=10")
-    link_first_page = link + "?" + sufix # this is returned as value to easily iterate pages in the future
+    try:
+        #this is used to get sufix from original link and change it to get rowsperpage
+        #THIS WILL CAUSE PROBLEMS FOR PAGES THAT HAVE RESULTS BUT NOT MULTIPLE PAGES, EXAMPLE: RESULTS OF LESS THAN 10 PDFS
+        elem_next_btn = browser.find_element(By.CSS_SELECTOR, "[class*='next-btn']") #next-btn
+        elem_next_btn.click()
+        second_page_url = browser.current_url
+        sufix = second_page_url.split("?")[1]
+        sufix = sufix.replace("pageNumber=2", "rowsPerPage=10")
+        link_first_page = link + "?" + sufix # this is returned as value to easily iterate pages in the future
+    except:
+        print("Couldnt generate fixed link, hardcoding new link.")
+        link_first_page = link + "?" + "rowsPerPage=10" # this is hard coded, other approach with generating new page is better
     time.sleep(2)
 
     try:
@@ -65,7 +69,6 @@ def get_last_index(link):
         return num_results, link_first_page
 
 def download_from_list(testing): # this done without more threads
-    # testing -- list of links wo open with browser and get pages, iterates through list
 
     system_exit = 0
     chrome_options = webdriver.ChromeOptions()

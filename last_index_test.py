@@ -21,6 +21,21 @@ def get_last_index(link):
     except:
         pass
     time.sleep(2)
+
+    try:
+        #this is used to get sufix from original link and change it to get rowsperpage
+        #THIS WILL CAUSE PROBLEMS FOR PAGES THAT HAVE RESULTS BUT NOT MULTIPLE PAGES, EXAMPLE: RESULTS OF LESS THAN 10 PDFS
+        elem_next_btn = browser.find_element(By.CSS_SELECTOR, "[class*='next-btn']") #next-btn
+        elem_next_btn.click()
+        second_page_url = browser.current_url
+        sufix = second_page_url.split("?")[1]
+        sufix = sufix.replace("pageNumber=2", "rowsPerPage=10")
+        link_first_page = link + "?" + sufix # this is returned as value to easily iterate pages in the future
+    except:
+        print("Couldnt generate fixed link, returning original.")
+        link_first_page = link + "?" + "rowsPerPage=10" # this is hard coded, other approach with generating new page is better
+    time.sleep(2)
+
     try:
         elem = browser.find_element(By.CSS_SELECTOR, "[class*='Dashboard-header']") # Dashboard-header col-12
         #elem = browser.find_element(By.CSS_SELECTOR, "[class*='global-margins']") ## col-24-24 Dashboard-section
@@ -52,6 +67,7 @@ def get_last_index(link):
         num_results = int(ceiling_based_on_last_digit(num_results) / 10)
 
         print(f"For this link > {link}, there are > {num_results} pages of result.")
+        return num_results, link_first_page
 
 #script for detecting number of result pages for link
 
