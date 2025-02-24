@@ -3,29 +3,6 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 import time, re, sys
 
-#script for detecting number of result pages for link
-
-# this was used for testing
-links = ["https://ieeexplore.ieee.org/search/searchresult.jsp?newsearch=true&queryText=mali%20bembo",
-         "https://ieeexplore.ieee.org/search/searchresult.jsp?newsearch=true&queryText=machine%20learning", 
-         "https://ieeexplore.ieee.org/xpl/conhome/10723818/proceeding",
-         "https://ieeexplore.ieee.org/xpl/conhome/10500516/proceeding",
-         "https://ieeexplore.ieee.org/xpl/conhome/10554669/proceeding",
-         "https://ieeexplore.ieee.org/xpl/conhome/10662982/proceeding",
-         "https://ieeexplore.ieee.org/xpl/conhome/10483273/proceeding",
-         "https://ieeexplore.ieee.org/xpl/conhome/10667474/proceeding",
-         "https://ieeexplore.ieee.org/xpl/conhome/10663060/proceeding",
-         "https://ieeexplore.ieee.org/xpl/conhome/10664657/proceeding",
-         "https://ieeexplore.ieee.org/xpl/conhome/10654343/proceeding",
-         "https://ieeexplore.ieee.org/xpl/conhome/10735440/proceeding",
-         "https://ieeexplore.ieee.org/xpl/conhome/10723818/proceeding",
-         "https://ieeexplore.ieee.org/xpl/conhome/10493069/proceeding",
-         "https://ieeexplore.ieee.org/xpl/conhome/10542692/proceeding",
-         "https://ieeexplore.ieee.org/xpl/conhome/10685652/proceeding",
-         "https://ieeexplore.ieee.org/xpl/conhome/10540647/proceeding",
-         "https://ieeexplore.ieee.org/xpl/conhome/10605587/proceeding",
-         "https://ieeexplore.ieee.org/xpl/conhome/10589922/proceeding"] # 1. search result, 2. conference link, 3. no results
-
 def ceiling_based_on_last_digit(number):
     if number % 10 == 0:
         return number
@@ -75,3 +52,33 @@ def get_last_index(link):
         num_results = int(ceiling_based_on_last_digit(num_results) / 10)
 
         print(f"For this link > {link}, there are > {num_results} pages of result.")
+
+#script for detecting number of result pages for link
+
+# this was used for testing
+links1 = ["https://ieeexplore.ieee.org/search/searchresult.jsp?newsearch=true&queryText=mali%20bembo",
+         "https://ieeexplore.ieee.org/search/searchresult.jsp?newsearch=true&queryText=machine%20learning", 
+         "https://ieeexplore.ieee.org/xpl/conhome/10723818/proceeding",
+         "https://ieeexplore.ieee.org/xpl/conhome/10500516/proceeding",
+         "https://ieeexplore.ieee.org/xpl/conhome/10554669/proceeding",
+         "https://ieeexplore.ieee.org/xpl/conhome/10662982/proceeding",
+         "https://ieeexplore.ieee.org/xpl/conhome/10483273/proceeding",
+         "https://ieeexplore.ieee.org/xpl/conhome/10667474/proceeding",
+         "https://ieeexplore.ieee.org/xpl/conhome/10663060/proceeding",
+         "https://ieeexplore.ieee.org/xpl/conhome/10664657/proceeding",
+         "https://ieeexplore.ieee.org/xpl/conhome/10654343/proceeding",
+         "https://ieeexplore.ieee.org/xpl/conhome/10735440/proceeding",
+         "https://ieeexplore.ieee.org/xpl/conhome/10723818/proceeding",
+         "https://ieeexplore.ieee.org/xpl/conhome/10493069/proceeding",
+         "https://ieeexplore.ieee.org/xpl/conhome/10542692/proceeding",
+         "https://ieeexplore.ieee.org/xpl/conhome/10685652/proceeding",
+         "https://ieeexplore.ieee.org/xpl/conhome/10540647/proceeding",
+         "https://ieeexplore.ieee.org/xpl/conhome/10605587/proceeding",
+         "https://ieeexplore.ieee.org/xpl/conhome/10589922/proceeding"] # 1. search result, 2. conference link, 3. no results
+
+link = "https://ieeexplore.ieee.org/xpl/conhome/10483273/proceeding"
+
+max, fixed_link = get_last_index(link)
+
+print(max)
+

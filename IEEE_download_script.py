@@ -1,7 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-import time, sys, re, os
+import time, sys, re, os, hashlib
 
 def ceiling_based_on_last_digit(number):
     if number % 10 == 0:
@@ -149,9 +149,30 @@ def download_from_list(testing): # this done without more threads
                     result_message = result.group(1).strip()
                     print(f"Message: {result_message}")# this works, needs to check what is returned, for testing this is OK output <div _ngcontent-ng-c4125381912="" class="downloadpdf-postdl-msg"> The items you have selected have been successfully downloaded. </div><!----><!----><!----><!---->
                     if result_message != "The items you have selected have been successfully downloaded.":
+                        # if download is interrupted txt file is created in report file folder
+
+                        #first check whether report_file dir exists, if not create it
+                        dir_name = "report_file"
+                        if os.path.isdir(dir_name):
+                            pass # exists
+                        else:
+                            try:
+                                os.mkdir(dir_name)
+                                print(f"Directory '{dir_name}' created successfully.")
+                            except FileExistsError:
+                                print(f"Directory '{dir_name}' already exists.")
+                            except PermissionError:
+                                print(f"Permission denied: Unable to create '{dir_name}'.")
+                                system_exit = 1
+                            except Exception as e:
+                                print(f"An error occurred: {e}")
+                                system_exit = 1
+
                         print("Failed dowloading, exiting process.")
-                        report_file = open("report_file.txt", "w")
                         report_link = each.split("?isnumber")[0]
+                        hash_value = hashlib.md5(report_link.encode()).hexdigest()
+                        report_file_path = str("./report_file/" + hash_value + ".txt")
+                        report_file = open(report_file_path, "w")
                         report_file.write(f"{page_num},{report_link}")
                         print(f"Download failed for link > {report_link}, last page downloaded > {page_num}") # TODO testing
                         system_exit = 1
@@ -175,8 +196,53 @@ start_time = time.time()
 link = "https://ieeexplore.ieee.org/xpl/conhome/10723818/proceeding"
 print(f"Started script for link > {link}")
 
-#check whether report file exists
-file_exists_flag = False
+#check whether report file folder exists
+folder_path = "./report_file"
+if os.path.isdir(folder_path):
+    pass # exists
+else:
+    try:
+        os.mkdir(folder_path)
+        print(f"Directory '{folder_path}' created successfully.")
+    except FileExistsError:
+        print(f"Directory '{folder_path}' already exists.")
+    except PermissionError:
+        print(f"Permission denied: Unable to create '{folder_path}'.")
+        system_exit = 1
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        system_exit = 1
+
+if system_exit:
+    sys.exit(0)
+
+link_hash = hashlib.md5(link.encode()).hexdigest()
+report_files = os.listdir(folder_path)
+
+if link_hash + ".txt" in report_files:
+    report_file = open("./report_file/" + link_hash + ".txt", "r")
+    for line in report_file:
+        error_msg = ""
+        error_msg = line.split(",")
+    error_code = int(error_msg[0])
+    error_link = error_msg[1]
+
+    print(f"Detected report file for link > {error_link}.")
+
+    if link == error_link:
+        initial_page_number = error_code
+        print(f"Report file and link provided are the same. Do you wish to continue downloading from page > {error_code}?")
+        user_response = str(input("(Y/N)?"))
+
+        if user_response.lower() == "y":
+            initial_page_number = error_code
+        elif user_response.lower() == "n":
+            initial_page_number = 1
+        else:
+            sys.exit(0)
+
+
+'''file_exists_flag = False
 file = "report_file.txt"
 
 if os.path.isfile(file):
@@ -200,7 +266,7 @@ if os.path.isfile(file):
         elif user_response.lower() == "n":
             initial_page_number = 1
         else:
-            sys.exit(0)
+            sys.exit(0)'''
 
 max, fixed_link = get_last_index(link)
 print(f"Last page detected {max}, and fixed link > {fixed_link}")
