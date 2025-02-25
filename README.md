@@ -1,16 +1,32 @@
 # IEEE-download
 Python script for automating download from IEEE Xplore page. Reading downloaded PDF files and extracting email addresses.<br>
-<br>
-TODO:
-    - testirat limit downloada po danu -- DONE<br>
-    - zavrsit iteriranje po "page number" -- DONE<br> 
-    - regex za pronalazak mailova u PDFu -- DONE<br>
-    - isprobat multithreading za download pdf sa svake dostupne stranice - thread("download from page_number=1,..") -- DONE<br>
-    <br>
-    <br>
-    - isprobat download na stranici gdje je prikazano 100 rezultata i skripta pronalazi PDF ikonu i manualno skida jedan po jedan<br>
+## This script runs on python3 and requires these packages:<br />
+<br />
 
-<br>
-11.11 prva u potpunosti funkcionalna verzija "IEEE_download_script.py", odbacen nacin koristenja vise dretvi, trenutno se koristi iteriranje, za ~ 370 rezultata treba oko ~15min.<br>
-<br>
-16.11 funkcionalna verzija sa nesto brzom metodom rada od prijasnje(dodana nova funkcija za download) za ~ 370 rezultata treba oko ~13min. Koristenje dretvi idalje najbrza metoda ali ne radi u potpunosti ispravno(neke dretve ne odrade download do kraja.)<br>
+Selenium for navigating IEEE site and downloading:
+```
+pip install selenium
+```
+PyPDF2 for reading downloaded PDFs:
+```
+pip install PyPDF2
+```
+<br />
+
+Clone repository:
+```
+git@github.com:LovroMagdic/IEEE-download.git
+```
+
+```
+python IEEE_download_script.py "provide a link"
+```
+Downloaded pdf will be downloaded to "./zip" folder.<br />
+If download is interrupted report_file will be created in "./report_file" folder containing page where it failed and link provided.<br />
+
+Then run:
+
+```
+python pdf_reader_test.py
+```
+all PDFs in "./zip" folder will be unzipped to "./unzip" and results extracted to "output.txt".<br />
