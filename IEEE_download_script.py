@@ -22,8 +22,6 @@ def get_last_index(link):
     time.sleep(2)
 
     try:
-        #this is used to get sufix from original link and change it to get rowsperpage
-        #THIS WILL CAUSE PROBLEMS FOR PAGES THAT HAVE RESULTS BUT NOT MULTIPLE PAGES, EXAMPLE: RESULTS OF LESS THAN 10 PDFS
         elem_next_btn = browser.find_element(By.CSS_SELECTOR, "[class*='next-btn']") #next-btn
         elem_next_btn.click()
         second_page_url = browser.current_url
@@ -37,7 +35,6 @@ def get_last_index(link):
 
     try:
         elem = browser.find_element(By.CSS_SELECTOR, "[class*='Dashboard-header']") # Dashboard-header col-12
-        #elem = browser.find_element(By.CSS_SELECTOR, "[class*='global-margins']") ## col-24-24 Dashboard-section
         elem = elem.get_attribute("innerHTML").splitlines()[0]
         flag = 1
     except:
@@ -80,7 +77,6 @@ def download_from_list(testing): # this done without more threads
         page_num = each.split("&pageNumber=")
         print(f"Started getting downloads from: {page_num[1]}")
 
-        #browser.minimize_window()
         browser.get(each)
         time.sleep(5)
         exit = bool(0) # 0 results FALSE, 1 results TRUE
@@ -103,7 +99,7 @@ def download_from_list(testing): # this done without more threads
             browser.quit()
             
         else:
-            elem_select_all = 0 # flag for checking if select all button showedup
+            elem_select_all = 0 # flag for checking if select all button exists
             num_try = 0
             while elem_select_all == 0:
                 try:
@@ -146,9 +142,6 @@ def download_from_list(testing): # this done without more threads
                     pattern = r'<div[^>]*class="downloadpdf-postdl-msg"[^>]*>(.*?)</div>'
 
                     result = re.search(pattern, str(elem_close_message))
-                    #if result:
-                        #print(result.group(1).strip())
-                    #print(f"This is message recorded: {elem_close_message}")# this works, needs to check what is returned, for testing this is OK output <div _ngcontent-ng-c4125381912="" class="downloadpdf-postdl-msg"> The items you have selected have been successfully downloaded. </div><!----><!----><!----><!---->
                     result_message = result.group(1).strip()
                     print(f"Message: {result_message}")# this works, needs to check what is returned, for testing this is OK output <div _ngcontent-ng-c4125381912="" class="downloadpdf-postdl-msg"> The items you have selected have been successfully downloaded. </div><!----><!----><!----><!---->
                     if result_message != "The items you have selected have been successfully downloaded.":
@@ -189,103 +182,78 @@ def download_from_list(testing): # this done without more threads
         print(f"Finished getting downloads from: {page_num[1]}")
 
 # MAIN
-rows_per_page = "&rowsPerPage=10" # makes sure that all PDFs on page are downloaded, since there is a limit of 10 per download req
-page_number = "&pageNumber=" # need to concate str with number of page, used to make sure all pdf for search results are downloaded
-initial_page_number = 1
-arg_list = []
-list_of_urls_to_open = []
-start_time = time.time()
+if __name__ == "__main__":
+    arguments = sys.argv
 
-link = "https://ieeexplore.ieee.org/xpl/conhome/10723818/proceeding"
-print(f"Started script for link > {link}")
+    rows_per_page = "&rowsPerPage=10" # makes sure that all PDFs on page are downloaded, since there is a limit of 10 per download req
+    page_number = "&pageNumber=" # need to concate str with number of page, used to make sure all pdf for search results are downloaded
+    initial_page_number = 1
+    arg_list = []
+    list_of_urls_to_open = []
+    start_time = time.time()
 
-#check whether report file folder exists
-folder_path = "./report_file"
-if os.path.isdir(folder_path):
-    pass # exists
-else:
-    try:
-        os.mkdir(folder_path)
-        print(f"Directory '{folder_path}' created successfully.")
-    except FileExistsError:
-        print(f"Directory '{folder_path}' already exists.")
-    except PermissionError:
-        print(f"Permission denied: Unable to create '{folder_path}'.")
-        system_exit = 1
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        system_exit = 1
+    if len(arguments) > 1:
+        link = arguments[1] # if len of arguments is greater than 1 than script was run via terminal with second expression as link
+    elif len(arguments) == 1:
+        link = "https://ieeexplore.ieee.org/xpl/conhome/10723818/proceeding"
+    print(f"Started script for link > {link}")
 
-if system_exit:
-    sys.exit(0)
+    #check whether report file folder exists
+    folder_path = "./report_file"
+    if os.path.isdir(folder_path):
+        pass # exists
+    else:
+        try:
+            os.mkdir(folder_path)
+            print(f"Directory '{folder_path}' created successfully.")
+        except FileExistsError:
+            print(f"Directory '{folder_path}' already exists.")
+        except PermissionError:
+            print(f"Permission denied: Unable to create '{folder_path}'.")
+            system_exit = 1
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            system_exit = 1
 
-link_hash = hashlib.md5(link.encode()).hexdigest()
-report_files = os.listdir(folder_path)
+    if system_exit:
+        sys.exit(0)
 
-if link_hash + ".txt" in report_files:
-    report_file = open("./report_file/" + link_hash + ".txt", "r")
-    for line in report_file:
-        error_msg = ""
-        error_msg = line.split(",")
-    error_code = int(error_msg[0])
-    error_link = error_msg[1]
+    link_hash = hashlib.md5(link.encode()).hexdigest()
+    report_files = os.listdir(folder_path)
 
-    print(f"Detected report file for link > {error_link}.")
+    if link_hash + ".txt" in report_files:
+        report_file = open("./report_file/" + link_hash + ".txt", "r")
+        for line in report_file:
+            error_msg = ""
+            error_msg = line.split(",")
+        error_code = int(error_msg[0])
+        error_link = error_msg[1]
 
-    if link == error_link:
-        initial_page_number = error_code
-        print(f"Report file and link provided are the same. Do you wish to continue downloading from page > {error_code}?")
-        user_response = str(input("(Y/N)?"))
+        print(f"Detected report file for link > {error_link}.")
 
-        if user_response.lower() == "y":
+        if link == error_link:
             initial_page_number = error_code
-        elif user_response.lower() == "n":
-            initial_page_number = 1
-        else:
-            sys.exit(0)
+            print(f"Report file and link provided are the same. Do you wish to continue downloading from page > {error_code}?")
+            user_response = str(input("(Y/N)?"))
 
+            if user_response.lower() == "y":
+                initial_page_number = error_code
+            elif user_response.lower() == "n":
+                initial_page_number = 1
+            else:
+                sys.exit(0)
 
-'''file_exists_flag = False
-file = "report_file.txt"
+    max, fixed_link = get_last_index(link)
+    print(f"Last page detected {max}, and fixed link > {fixed_link}")
 
-if os.path.isfile(file):
-    file_exists_flag = True
-    f = open(file)
-    error_msg = ""
-    for line in f:
-        error_msg = line.split(",")
-    error_code = int(error_msg[0])
-    error_link = error_msg[1]
-
-    print(f"Detected report file for link > {error_link}.")
-
-    if link == error_link:
-        initial_page_number = error_code
-        print(f"Report file and link provided are the same. Do you wish to continue downloading from page > {error_code}?")
-        user_response = str(input("(Y/N)?"))
-
-        if user_response.lower() == "y":
-            initial_page_number = error_code
-        elif user_response.lower() == "n":
-            initial_page_number = 1
-        else:
-            sys.exit(0)'''
-
-max, fixed_link = get_last_index(link)
-print(f"Last page detected {max}, and fixed link > {fixed_link}")
-
-for i in range(initial_page_number,max+1,1):
-    full_link = fixed_link + page_number + str(initial_page_number)
-    list_of_urls_to_open.append(full_link)
-    initial_page_number +=1
-download_from_list(list_of_urls_to_open)
-print("--- %s seconds ---" % (time.time() - start_time))
+    for i in range(initial_page_number,max+1,1):
+        full_link = fixed_link + page_number + str(initial_page_number)
+        list_of_urls_to_open.append(full_link)
+        initial_page_number +=1
+    download_from_list(list_of_urls_to_open)
+    print("--- %s seconds ---" % (time.time() - start_time))
 
 # BUG TESTING
-
 # ogromna konferencija https://ieeexplore.ieee.org/xpl/conhome/10723818/proceeding
-# bug di ako ima manje od 10 rezultata ne postoji nova stranica ikada pa detektira kao da nema rezultata
 # malena konferencija https://ieeexplore.ieee.org/xpl/conhome/10483273/proceeding
-
-
 #possible message exceptions : Items have not been downloaded because they are either outside of your subscription or not eligible for multiple PDF download.
