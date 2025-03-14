@@ -183,6 +183,7 @@ def download_from_list(testing): # this done without more threads
 
 # MAIN
 if __name__ == "__main__":
+    system_exit = 0
     arguments = sys.argv
 
     rows_per_page = "&rowsPerPage=10" # makes sure that all PDFs on page are downloaded, since there is a limit of 10 per download req
